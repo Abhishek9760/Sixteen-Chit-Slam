@@ -1,0 +1,12 @@
+16 parchi thap
+	- 4 people
+	- 16 parchi
+	- parchi goes in circular path
+	- parchi is anonymous
+	- whoever gets all 4 same parchi first wins
+	- parchi names to be decided by the room creater
+	- room capacity 4
+	- there will be 3 winners and 1 loser
+	- selection of 4 parchi out of 16 parchi by each user (simultaneously or independently...?)
+
+	

@@ -1,36 +1,41 @@
 import React, {useState} from 'react';
-import {View, Text, ScrollView} from 'react-native';
 import styled from 'styled-components/native';
 import {TextInput, Button} from 'react-native-paper';
-import FancyButton from './FancyButton';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {Spacer} from './utils/Spacer';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 const CreateRoom = () => {
   const [roomCode, setRoomCode] = useState('');
-  const [roomKey, setRoomKey] = useState('');
+  const [name, setName] = useState('');
+  const navigation = useNavigation();
+  // const user = useSelector(state => state.users);
+
+  const handlePress = () => {
+    if (roomCode && name) {
+      navigation.navigate('game', {
+        name,
+        roomCode,
+      });
+    }
+  };
   return (
     <Container>
       <Wrapper>
+        <TextInput label="YOUR NAME" value={name} onChangeText={setName} />
+        <Spacer margin="10" vertical />
         <TextInput
           label="ROOM CODE"
           value={roomCode}
           onChangeText={setRoomCode}
         />
-
-        <TextInput label="ROOM KEY" value={roomKey} onChangeText={setRoomKey} />
-
+        <Spacer margin="10" vertical />
         <Button
-          disabled
-          icon={() => <Icon name="rocket" size={30} color="#900" />}
-          mode="contained-tonal"
-          onPress={() => console.log('Pressed')}>
+          icon={() => <Icon name="enter-outline" size={22} color="white" />}
+          mode="contained"
+          onPress={handlePress}>
           ENTER ROOM
-        </Button>
-        <Button icon="camera" mode="elevated" onPress={() => {}}>
-          Elevated
-        </Button>
-        <Button icon="camera" mode="container-tonal" onPress={() => {}}>
-          Container tonal
         </Button>
       </Wrapper>
     </Container>
@@ -41,13 +46,11 @@ export default CreateRoom;
 
 const Wrapper = styled.View`
   padding: 5px 20px;
-  flex: 0.4;
   justify-content: space-between;
-  /* background-color: yellow; */
 `;
 
 const Container = styled.ScrollView.attrs({
-  contentContainerStyle: {flex: 0.8, justifyContent: 'center'},
+  contentContainerStyle: {flex: 1, justifyContent: 'center'},
 })`
-  background-color: '#eeeeee';
+  background-color: ${props => props.theme.colors.background};
 `;
