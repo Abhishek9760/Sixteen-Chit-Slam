@@ -41,7 +41,7 @@ const MainStackNavigator = () => {
       <Stack.Screen
         name="chits"
         component={ChitsScreen}
-        // options={{headerShown: false}}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="game"
@@ -49,7 +49,7 @@ const MainStackNavigator = () => {
         options={{
           headerTitle: 'Games',
         }}
-        // options={{headerShown: false}}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
   );

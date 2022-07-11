@@ -1,1 +1,1 @@
-export {addUser} from './userActions';
+export {addUser, addCurrentUser} from './userActions';

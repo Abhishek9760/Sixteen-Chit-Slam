@@ -14,11 +14,27 @@ io.on('connection', socket => {
   let roomName;
 
   socket.on('join-room', roomCode => {
-    console.log('joining room', roomCode);
+    // console.log('joining room', roomCode);
     roomName = roomCode;
     socket.join(roomCode);
-    // socket.to(roomCode).emit('get-data');
+    socket.to(roomCode).emit('give-me-users-list');
   });
+
+  socket.on('update-client', user => {
+    console.log('updating client');
+    socket.to(roomName).emit('set-user-state', user);
+  });
+
+  socket.on('update-other-socket', userData => {
+    console.log('updating other socket', userData);
+    socket.to(userData.to.socketid).emit('set-user-state-last', userData.data);
+  });
+
+  // socket.on('set-user-data', user => socket.emit('set-user-state', user));
+
+  // socket.on('add-new-user', user => {
+  //   socket.to(roomName).emit('add-new-user-to-state', user);
+  // });
 });
 
 // io.on('connection', socket => {

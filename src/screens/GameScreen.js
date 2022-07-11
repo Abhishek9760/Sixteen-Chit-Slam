@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {addUser} from '../actions';
 import {addCurrentUser} from '../actions/userActions';
 import {View} from 'react-native';
+import {ADD_AVATAR} from '../constants';
 // import { useNavigation } from '@react-navigation/native';
 
 const avatars = {
@@ -29,21 +30,67 @@ const Avatar = ({image, active, name, online}) => (
 const GameScreen = ({route, navigation}) => {
   const dispatch = useDispatch();
   // const navigation = useNavigation();
-  let users = useSelector(state => state.users.user_list);
-  const first = users.splice(0, 2);
-  const second = users;
-  console.log(first, second);
+  const users = useSelector(state => state.users.user_list);
+  // const avatar = useSelector(state => state.users.avatar);
+  // console.log(state);
+  let usrs = [...users];
+  const first = usrs.splice(0, 2);
+  const second = usrs;
+  // console.log(first, second);
 
   useEffect(() => {
     socket.on('connect', () => {
-      const {roomCode} = route.params;
-      socket.emit('join-room', roomCode);
+      const {roomCode, name} = route.params;
       const userData = {
         ...route.params,
         socketid: socket.id,
+        avatar: 'avatar' + name,
       };
-      dispatch(addUser(userData));
       dispatch(addCurrentUser(userData));
+      dispatch({type: ADD_AVATAR, payload: userData.avatar});
+
+      // JOINING ROOM
+      console.log('joining room', roomCode);
+      socket.emit('join-room', roomCode);
+
+      socket.on('give-me-users-list', () => {
+        console.log('updating..');
+        socket.emit('update-client', userData);
+      });
+
+      socket.on('set-user-state', user => {
+        console.log('setting user', user.name, 'in', socket.id);
+        socket.emit('update-other-socket', {data: userData, to: user});
+        dispatch(addUser(user));
+      });
+
+      socket.on('set-user-state-last', user => dispatch(addUser(user)));
+
+      // GETTING UPDATED USERS
+      // socket.on('get-users', () => {
+      //   socket.emit('users-list', state.user_list);
+      // });
+
+      // socket.on('get-updated-user-data', () => {
+      //   console.log('getting the data', socket.id, userData);
+      //   socket.emit('set-user-data', userData);
+      // });
+
+      // socket.on('set-user-state', user => {
+      //   console.log(user);
+      //   dispatch(addUser(user));
+      // });
+      // dispatch(addUser(userData));
+      // socket.emit('add-new-user', userData);
+      // socket.on('add-new-user-to-state', user => {
+      //   // console.log(user, user);
+      //   dispatch(addUser(user));
+      //   // socket.emit('add-user-to-other-side', state.current_user);
+      // });
+      // socket.on('get-updated-user-data', socket.emit(''))
+      // socket.emit('add-new-user', userData);
+      console.log(userData.socketid);
+      // dispatch(addUser(userData));
     });
   }, []);
 
@@ -55,9 +102,10 @@ const GameScreen = ({route, navigation}) => {
             return (
               <Avatar
                 key={i}
-                image={avatars[`avatar${i + 1}`]}
+                image={avatars[user.avatar]}
                 name={user.name}
                 online
+                active={user.socketid === socket.id}
               />
             );
           })}
@@ -67,9 +115,10 @@ const GameScreen = ({route, navigation}) => {
             return (
               <Avatar
                 key={i}
-                image={avatars[`avatar${i + 1}`]}
+                image={avatars[user.avatar]}
                 name={user.name}
                 online
+                active={user.socketid === socket.id}
               />
             );
           })}
